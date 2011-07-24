@@ -29,7 +29,7 @@ public class JSonVisitor implements DependencyVisitor{
         Artifact art = node.getDependency().getArtifact();
         builder.append("groupId:'").append(art.getGroupId()).append("',");
         builder.append("artifactId:'").append(art.getArtifactId()).append("',");
-        builder.append("version:'").append(art.getArtifactId()).append("'");
+        builder.append("version:'").append(art.getVersion()).append("'");
         if(node.getDependency().getScope()!=null){
             builder.append(", scope:'").append(node.getDependency().getScope()).append("'");        
         }
