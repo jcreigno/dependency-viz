@@ -1,0 +1,152 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>fr.jcreigno</groupId>
+  <artifactId>depsviz</artifactId>
+  <packaging>war</packaging>
+  <version>1.0-SNAPSHOT</version>
+  <name>dependencyviz Maven Webapp</name>
+<repositories>
+  <repository>
+   <id>javamaven2</id>
+   <name>Repository for Maven2</name>
+   <url>http://download.java.net/maven/2</url>
+  </repository>
+ </repositories>
+ <build>
+        <finalName>dependencyviz</finalName>
+  <plugins>
+    <plugin>
+    <!-- JETTY 6 PLUGIN -->
+    <groupId>org.mortbay.jetty</groupId>
+    <artifactId>maven-jetty-plugin</artifactId>
+    <version>6.1.14</version>
+    <configuration>
+        <scanIntervalSeconds>10</scanIntervalSeconds>
+        <contextPath>/dependencyviz</contextPath>
+        <connectors>
+            <connector implementation="org.mortbay.jetty.nio.SelectChannelConnector">
+                <port>8080</port>
+                <maxIdleTime>60000</maxIdleTime>
+            </connector>
+        </connectors>
+        <webApp>${basedir}/target/jersey-demo</webApp>
+        <requestLog implementation="org.mortbay.jetty.NCSARequestLog">
+            <filename>target/yyyy_mm_dd.request.log</filename>
+            <retainDays>90</retainDays>
+            <append>true</append>
+            <extended>true</extended>
+            <logTimeZone>GMT</logTimeZone>
+        </requestLog>
+    </configuration>
+       </plugin>
+   </plugins>
+</build>
+ <dependencies>
+     <dependency>
+        <groupId>javax.ws.rs</groupId>
+        <artifactId>jsr311-api</artifactId>
+        <version>1.0</version>
+    </dependency>
+    <dependency>
+        <groupId>javax.xml.bind</groupId>
+        <artifactId>jaxb-api</artifactId>
+        <version>2.1</version>
+        <scope>provided</scope>
+    </dependency>
+  <dependency>
+   <!-- the implementation of JAX-RS -->
+   <groupId>com.sun.jersey</groupId>
+   <artifactId>jersey-server</artifactId>
+   <version>1.0.1</version>
+  </dependency>
+  <!-- PROVIDED BY CONTAINER; HERE FOR COMPILE ONLY -->
+  <dependency>
+   <groupId>javax.servlet</groupId>
+   <artifactId>servlet-api</artifactId>
+   <version>2.5</version>
+   <scope>provided</scope>
+  </dependency>
+  <!-- TEST SCOPE DEPENDENCIES -->
+  <dependency>
+   <groupId>junit</groupId>
+   <artifactId>junit</artifactId>
+   <version>[4.0,5.0)</version>
+   <scope>test</scope>
+  </dependency>
+  <!-- aether -->
+    <dependency>
+      <groupId>org.sonatype.aether</groupId>
+      <artifactId>aether-api</artifactId>
+      <version>1.12</version>
+    </dependency>
+    <dependency>
+      <groupId>org.sonatype.aether</groupId>
+      <artifactId>aether-spi</artifactId>
+      <version>1.12</version>
+    </dependency>
+    <dependency>
+      <groupId>org.sonatype.aether</groupId>
+      <artifactId>aether-util</artifactId>
+      <version>1.12</version>
+    </dependency>
+        <dependency>
+      <groupId>org.sonatype.aether</groupId>
+      <artifactId>aether-impl</artifactId>
+      <version>1.12</version>
+    </dependency>
+        <dependency>
+      <groupId>org.sonatype.aether</groupId>
+      <artifactId>aether-connector-file</artifactId>
+      <version>1.12</version>
+    </dependency>
+    <dependency>
+      <groupId>org.sonatype.aether</groupId>
+      <artifactId>aether-connector-wagon</artifactId>
+      <version>1.12</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-aether-provider</artifactId>
+      <version>${mavenVersion}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.wagon</groupId>
+      <artifactId>wagon-provider-api</artifactId>
+      <version>${wagonVersion}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.wagon</groupId>
+      <artifactId>wagon-http-lightweight</artifactId>
+      <version>${wagonVersion}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>nekohtml</groupId>
+          <artifactId>nekohtml</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>nekohtml</groupId>
+          <artifactId>xercesMinimal</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>commons-logging</groupId>
+          <artifactId>commons-logging</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.plexus</groupId>
+      <artifactId>plexus-utils</artifactId>
+      <version>2.0.7</version>
+    </dependency>
+    <dependency>
+      <groupId>org.sonatype.sisu</groupId>
+      <artifactId>sisu-inject-plexus</artifactId>
+      <version>2.2.2</version>
+    </dependency>
+  </dependencies>
+    <properties>
+    <mavenVersion>3.0.3</mavenVersion>
+    <wagonVersion>1.0-beta-7</wagonVersion>
+  </properties>
+</project>
