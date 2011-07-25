@@ -27,14 +27,14 @@ public class JSonVisitor implements DependencyVisitor{
     public boolean visitEnter( DependencyNode node ){
         builder.append("{");
         Artifact art = node.getDependency().getArtifact();
-        builder.append("groupId:'").append(art.getGroupId()).append("',");
-        builder.append("artifactId:'").append(art.getArtifactId()).append("',");
-        builder.append("version:'").append(art.getVersion()).append("'");
+        builder.append("\"groupId\":\"").append(art.getGroupId()).append("\",");
+        builder.append("\"artifactId\":\"").append(art.getArtifactId()).append("\",");
+        builder.append("\"version\":\"").append(art.getVersion()).append("\"");
         if(node.getDependency().getScope()!=null){
-            builder.append(", scope:'").append(node.getDependency().getScope()).append("'");        
+            builder.append(", \"scope\":\"").append(node.getDependency().getScope()).append("\"");        
         }
         if(!node.getChildren().isEmpty()){
-            builder.append(", children: [");   
+            builder.append(", \"children\": [");   
         }
         return true;
     }
@@ -48,14 +48,15 @@ public class JSonVisitor implements DependencyVisitor{
      */
     public boolean visitLeave( DependencyNode node ) {
         if(!node.getChildren().isEmpty()){
-            builder.append("]");
+            builder.replace(builder.length()-1, builder.length(), "]");
         }
-        builder.append("}");
+        builder.append("},");
         return true;
     }
     
     public String toString(){
-        return builder.toString();
+        String res = builder.toString();
+        return res.substring(0,res.length()-1);
     }
 }
 

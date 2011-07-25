@@ -1,4 +1,4 @@
-var artifact = {
+/*var artifact = {
     groupId:'commons-digester',
     artifactId:'commons-digester',
     version:'1.6', scope:'', 
@@ -6,25 +6,25 @@ var artifact = {
         {
             groupId:'commons-beanutils',
             artifactId:'commons-beanutils',
-            version:'commons-beanutils', 
+            version:'1.7', 
             scope:'compile'},    
         {
             groupId:'commons-logging',
             artifactId:'commons-logging',
-            version:'commons-logging', 
+            version:'1.1', 
             scope:'compile'},
         {
             groupId:'commons-collections',
             artifactId:'commons-collections',
-            version:'commons-collections', 
+            version:'2.3', 
             scope:'compile'},
         {
             groupId:'xml-apis',
             artifactId:'xml-apis',
-            version:'xml-apis', 
-            scope:'compile'}
+            version:'1.0-b0', 
+            scope:'runtime'}
    ]
-};
+};*/
 
 //
 //  main.js
@@ -34,8 +34,13 @@ var artifact = {
 
 (function($){
 
+
+    function formatArtifact (artifact){
+        return artifact.groupId+':'+artifact.artifactId+':'+artifact.version;
+    }
+
   var Renderer = function(canvas){
-    var canvas = $(canvas).get(0)
+    var canvas = $(canvas).get(0);
     var ctx = canvas.getContext("2d");
     var particleSystem
 
@@ -79,9 +84,11 @@ var artifact = {
           // edge: {source:Node, target:Node, length:#, data:{}}
           // pt1:  {x:#, y:#}  source position in screen coords
           // pt2:  {x:#, y:#}  target position in screen coords
-
-          // draw a line from pt1 to pt2
-          ctx.strokeStyle = "rgba(0,0,0, .333)"
+          if(edge.data.scope=='test'){
+            ctx.strokeStyle = "rgba(255,0,0, .666)";
+          }else{
+            ctx.strokeStyle = "rgba(0,0,0, .333)";
+          }
           ctx.lineWidth = 1
           ctx.beginPath()
           ctx.moveTo(pt1.x, pt1.y)
@@ -152,36 +159,57 @@ var artifact = {
 
       },
       
+      edges:function(art,e){
+        if(!art.children){
+            return e;
+        }
+        if(!e[formatArtifact(art)]){
+            e[formatArtifact(art)] = {};
+        }
+        for(var i=0;i<art.children.length;i++){
+            e[formatArtifact(art)][formatArtifact(art.children[i])] = art.children[i];
+            that.edges(art.children[i],e);
+        }
+        return e;
+      },
+      
+      tree:function(art){
+        var result = {edges:that.edges(art,{})};
+        return result;
+      }
     }
     return that
   }    
 
   $(document).ready(function(){
-    var sys = arbor.ParticleSystem(1000, 600, 0.5) // create the system with sensible repulsion/stiffness/friction
+    var sys = arbor.ParticleSystem(100, 600, 0.5) // create the system with sensible repulsion/stiffness/friction
     sys.parameters({gravity:true}) // use center-gravity to make the graph settle nicely (ymmv)
     sys.renderer = Renderer("#viewport") // our newly created renderer will have its .init() method called shortly by sys...
 
-    // add some nodes to the graph and watch it go...
-    sys.addEdge('commons-digester:commons-digester:1.6','commons-beanutils:commons-beanutils:1.5')
-    sys.addEdge('commons-digester:commons-digester:1.6','commons-logging:commons-logging:1.0.1')
-    sys.addEdge('commons-digester:commons-digester:1.6','commons-collections:commons-collections:2.3')
-    sys.addEdge('commons-digester:commons-digester:1.6','xml-apis:xml-apis:1.1')
-    //sys.addNode('f', {alone:true, mass:.25})
+    $.getJSON('api/tree/org.apache.maven.plugins/maven-site-plugin/2.0', function(data) {
+        sys.graft(sys.renderer.tree(data));
+    });
+
+
+    //sys.graft({edges:artifact});
+    //var graph = {edges:sys.renderer.tree(artifact)};
+    //sys.graft(sys.renderer.tree(artifact));
 
     // or, equivalently:
     //
-    // sys.graft({
-    //   nodes:{
-    //     f:{alone:true, mass:.25}
-    //   }, 
+    //sys.graft({
     //   edges:{
-    //     a:{ b:{},
-    //         c:{},
-    //         d:{},
-    //         e:{}
+    //    'commons-digester:commons-digester:1.6':{ 
+    //         'commons-beanutils:commons-beanutils:1.5':{},
+    //         'commons-logging:commons-logging:1.0.1':{},
+    //         'commons-collections:commons-collections:2.3':{},
+    //         'xml-apis:xml-apis:1.1':{}
+    //     },
+    //     'commons-beanutils:commons-beanutils:1.5':{
+    //            'commons-lang:commons-lang:1.0':{}
     //     }
     //   }
-    // })
+    //})
     
   })
 

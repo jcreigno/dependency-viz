@@ -45,7 +45,7 @@ public class DependencyTreeHandler {
         RepositorySystem system = (RepositorySystem)context.getAttribute("RepositorySystem");
         RepositorySystemSession session = newRepositorySystemSession(system);
         Artifact artifact = new DefaultArtifact( groupId+":"+artifactId+":"+version );
-                CollectRequest collectRequest = new CollectRequest();
+        CollectRequest collectRequest = new CollectRequest();
         collectRequest.setRoot( new Dependency( artifact, "" ) );
         collectRequest.addRepository( repo );
         CollectResult collectResult = null;
