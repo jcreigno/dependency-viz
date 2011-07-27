@@ -19,13 +19,16 @@ import org.sonatype.aether.artifact.Artifact;
 import org.sonatype.aether.collection.CollectRequest;
 import org.sonatype.aether.collection.CollectResult;
 import org.sonatype.aether.collection.DependencyCollectionException;
+import org.sonatype.aether.collection.DependencySelector;
 import org.sonatype.aether.graph.Dependency;
 import org.sonatype.aether.graph.DependencyNode;
 import org.sonatype.aether.repository.LocalRepository;
 import org.sonatype.aether.repository.RemoteRepository;
 import org.sonatype.aether.util.artifact.DefaultArtifact;
-
-
+import org.sonatype.aether.util.graph.selector.ScopeDependencySelector;
+import org.sonatype.aether.util.graph.selector.OptionalDependencySelector;
+import org.sonatype.aether.util.graph.selector.ExclusionDependencySelector;
+import org.sonatype.aether.util.graph.selector.AndDependencySelector;
 
 @Path("/tree")
 @Produces( { MediaType.APPLICATION_JSON })
@@ -66,6 +69,11 @@ public class DependencyTreeHandler {
 
         LocalRepository localRepo = new LocalRepository( "target/local-repo" );
         session.setLocalRepositoryManager( system.newLocalRepositoryManager( localRepo ) );
+        
+        DependencySelector depFilter =
+              new AndDependencySelector( new ScopeDependencySelector("provided"),
+                                         new OptionalDependencySelector(), new ExclusionDependencySelector() );
+        session.setDependencySelector( depFilter );
 
         //session.setTransferListener( new ConsoleTransferListener() );
         //session.setRepositoryListener( new ConsoleRepositoryListener() );
