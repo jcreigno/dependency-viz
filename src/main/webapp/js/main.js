@@ -85,11 +85,13 @@
           // pt1:  {x:#, y:#}  source position in screen coords
           // pt2:  {x:#, y:#}  target position in screen coords
           if(edge.data.scope=='test'){
-            ctx.strokeStyle = "rgba(255,0,0, .666)";
+            ctx.strokeStyle = "rgba(125,200,80, .333)";
+          }else if (edge.data.scope=='runtime'){
+            ctx.strokeStyle = "rgba(200,125,125, .333)";
           }else{
             ctx.strokeStyle = "rgba(0,0,0, .333)";
           }
-          ctx.lineWidth = 1
+          ctx.lineWidth = 2
           ctx.beginPath()
           ctx.moveTo(pt1.x, pt1.y)
           ctx.lineTo(pt2.x, pt2.y)
@@ -102,9 +104,16 @@
 
           // draw a rectangle centered at pt
           var w = 10
-          ctx.fillStyle = (node.data.alone) ? "black":"orange";
-          ctx.fillRect(pt.x-w/2, pt.y-w/2, w,w)
-          ctx.fillText(node.name, pt.x-w/2, pt.y-w/2);
+          ctx.beginPath();
+          ctx.fillStyle = (node.data.root) ? "black":"orange";
+          ctx.strokeStyle = "rgba(0,0,0, .333)";
+          ctx.lineWidth = 2;
+          //ctx.fillRect(pt.x-w/2, pt.y-w/2, w,w)
+          ctx.arc(pt.x, pt.y, w/2, 0, Math.PI * 2, false);
+          ctx.closePath();
+          ctx.fill();
+          ctx.fillText(node.name, pt.x-(ctx.measureText(node.name).width/2), pt.y-w);
+          ctx.stroke();
         })    			
       },
       
@@ -158,38 +167,36 @@
         $(canvas).mousedown(handler.clicked);
 
       },
-      
-      edges:function(art,e){
-        if(!art.children){
-            return e;
-        }
-        if(!e[formatArtifact(art)]){
-            e[formatArtifact(art)] = {};
-        }
-        for(var i=0;i<art.children.length;i++){
-            e[formatArtifact(art)][formatArtifact(art.children[i])] = art.children[i];
-            that.edges(art.children[i],e);
-        }
-        return e;
-      },
-      
+
       tree:function(art){
-        var result = {edges:that.edges(art,{})};
-        return result;
+        var e = {}, n = {};
+        var stack = [];
+        stack.push(art);
+        n[formatArtifact(art)]={root:true};
+        while(stack.length>0){
+            var a = stack.pop();
+            var name = formatArtifact(a);
+            if(!e[name]){
+                e[name] = {};
+            }
+            if(a.children){
+                for(var i=0;i<a.children.length;i++){
+                    var child = a.children[i];
+                    stack.push(e[name][formatArtifact(child)] = a.children[i]);
+                }        
+            }
+        }
+        return {edges:e,nodes:n};
       }
     }
     return that
   }    
 
   $(document).ready(function(){
-    var sys = arbor.ParticleSystem(100, 600, 0.5) // create the system with sensible repulsion/stiffness/friction
-    sys.parameters({gravity:true}) // use center-gravity to make the graph settle nicely (ymmv)
+    var sys = arbor.ParticleSystem() // create the system with sensible repulsion/stiffness/friction
+    sys.parameters({stiffness:100, repulsion:2000, gravity:true, dt:0.015}) // use center-gravity to make the graph settle nicely (ymmv)
     sys.renderer = Renderer("#viewport") // our newly created renderer will have its .init() method called shortly by sys...
-
-    $.getJSON('api/tree/org.apache.maven.plugins/maven-site-plugin/2.0', function(data) {
-        sys.graft(sys.renderer.tree(data));
-    });
-
+    document.system = sys;
 
     //sys.graft({edges:artifact});
     //var graph = {edges:sys.renderer.tree(artifact)};
@@ -212,5 +219,14 @@
     //})
     
   })
+  
+  $("#btDisplay").click(function(){
+    $.getJSON('api/tree/'+$("#groupId").val()+'/'+$("#artifactId").val()+'/'+$("#version").val(), function(data) {
+        document.system.graft(document.system.renderer.tree(data));
+    });
+  });
+  $("#btClear").click(function(){
+    document.system.prune(function(node){return true;});
+  });
 
 })(this.jQuery)
