@@ -1,4 +1,6 @@
-
+body {
+    background: #fff;
+}
 #viewport{
     border: 1px #000 dotted;
 }
