@@ -4,3 +4,11 @@ body {
 #viewport{
     border: 1px #000 dotted;
 }
+
+.test{
+    color: rgb(128,230,80);
+}
+
+.runtime{
+    color: rgb(128,128,128);
+}
