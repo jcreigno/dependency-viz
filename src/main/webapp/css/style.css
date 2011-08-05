@@ -1,14 +1,66 @@
 body {
     background: #fff;
+    padding : 0;
+    margin: 0;
+}
+input {
+    border: 1px solid #191970;
+    padding : 3px;
+}
+button {
+    border: 1px solid #191970;
+    cursor: pointer;
+    padding : 3px;
+}
+label[for]{
+    cursor: pointer;
+}
+h3{
+    padding:0px;
+    margin: 0px;
 }
 #viewport{
-    border: 1px #000 dotted;
+    padding:5px 5px 0px 10px;
 }
 
 .test{
-    color: rgb(128,230,80);
+    color: #83838d;
 }
 
 .runtime{
     color: rgb(128,128,128);
+}
+.animateable{
+    cursor: pointer;
+    font-weight : bold;
+}
+
+.animateable:hover{
+    
+}
+
+#viewport li + ul {
+    border-left : 1px dotted #000;
+}
+
+#viewport > ul {
+    margin-top : 5px;
+    border-left : 1px dotted #000;
+}
+
+#filters{
+    padding-left : 10px;
+    font-size : 80%
+}
+
+#filters div{
+    display: inline;
+    margin-left:5px;
+    padding: 3px;
+}
+
+#header {
+    border-bottom : 2px solid #191970;
+    background-color: #4682b4;
+    padding: 4px;
 }

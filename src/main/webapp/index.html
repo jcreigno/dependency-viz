@@ -4,37 +4,37 @@
 <html lang="en">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-	<title>arbor.js project template</title>
+	<title>Maven dependencies visualization</title>
 	<link rel="stylesheet" href="css/style.css" type="text/css">
 </head>
 <body>
-  <div>
-    <input type="text" id="groupId" name="groupId" value="org.apache.maven.plugins"/> 
-    <input type="text" id="artifactId" name="artifactId" value="maven-ear-plugin"/> 
-    <input type="text" id="version" name="version" value="2.0"/>
+  <div id="header">
+    <input type="text" title ="groupId" id="groupId" name="groupId" value="org.apache.maven.plugins"/> 
+    <input type="text" title ="artifactId" id="artifactId" name="artifactId" value="maven-ear-plugin"/> 
+    <input type="text" title ="version" id="version" name="version" value="2.0"/>
     <button type="button" name="btDisplay" id="btDisplay">Go !</button>
     <button type="button" name="btClear" id="btClear">Clear</button>
-    
+    <div id="filters">
+        <span>filters &gt;</span>
+        <div>
+            <label for="scopecompile">compile</label>
+            <input type="checkbox" id="scopecompile" name="scopecompile" disabled="disabled" checked="checked"></input>
+        </div>
+        <div>
+            <label for="scopetest">test</label>
+            <input type="checkbox" id="scopetest" name="scopetest" checked="checked"></input>
+        </div>
+        <div>
+            <label for="scoperuntime">runtime</label>
+            <input type="checkbox" id="scoperuntime" name="scoperuntime" checked="checked"></input>
+        </div>
     </div>
+  </div>
   <!--canvas id="viewport" width="800" height="600"></canvas-->
   <div id="viewport"> 
   </div> 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
-  <script src="js/raphael-min.js"></script>
-  <script src="js/arbor.js"></script>
-  <script src="js/arbor-tween.js"></script>
-  <script src="js/main-raphael.js"></script>
-  <!-- run from the original source files: -->
-  <!-- <script src="../../src/etc.js"></script>
-       <script src="../../src/kernel.js"></script>
-       <script src="../../src/graphics/colors.js"></script>
-       <script src="../../src/graphics/primitives.js"></script>
-       <script src="../../src/graphics/graphics.js"></script>
-       <script src="../../src/tween/easing.js"></script>
-       <script src="../../src/tween/tween.js"></script>
-       <script src="../../src/physics/atoms.js"></script>
-       <script src="../../src/physics/physics.js"></script>
-       <script src="../../src/physics/system.js"></script>
-       <script src="../../src/dev.js"></script> -->
+  <!--script src="js/raphael-min.js"></script-->
+  <script src="js/raw.js"></script>
 </body>
 </html>
