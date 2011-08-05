@@ -7,7 +7,9 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
+//import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.EntityTag;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
@@ -41,14 +43,23 @@ public class DependencyTreeHandler {
 
     @GET
     @Path("{groupId}/{artifactId}/{version}")
-    public String list(@Context Request request,
+    public Response list(@Context Request request,
         @PathParam("groupId") String groupId, 
         @PathParam("artifactId") String artifactId,
         @PathParam("version") String version) {
         
+        String name = groupId+":"+artifactId+":"+version;
+        Artifact artifact = new DefaultArtifact( name );
+        
+        EntityTag etag = new EntityTag(name);
+        Response.ResponseBuilder responseBuilder = request.evaluatePreconditions(etag);
+        if (responseBuilder != null) {
+              //context.log(name " + not changed..returning unmodified response code");
+              return responseBuilder.status(Response.Status.NOT_MODIFIED).build();
+        }
+        
         RepositorySystem system = (RepositorySystem)context.getAttribute("RepositorySystem");
         RepositorySystemSession session = newRepositorySystemSession(system);
-        Artifact artifact = new DefaultArtifact( groupId+":"+artifactId+":"+version );
         CollectRequest collectRequest = new CollectRequest();
         collectRequest.setRoot( new Dependency( artifact, "" ) );
         collectRequest.addRepository( (RemoteRepository)context.getAttribute("repository"));
@@ -62,7 +73,10 @@ public class DependencyTreeHandler {
         }
         JSonVisitor visitor = new JSonVisitor();
         collectResult.getRoot().accept(visitor);
-        return visitor.toString();
+        //CacheControl cacheControl = new CacheControl();
+        //cacheControl.setMaxAge(3600);
+        
+        return Response.ok(visitor.toString()).tag(etag).build();
     }
         
     private RepositorySystemSession newRepositorySystemSession( RepositorySystem system ) {
