@@ -21,6 +21,8 @@ h3{
 }
 #viewport{
     padding:5px 5px 0px 10px;
+    overflow: auto;
+    margin-bottom:10px;
 }
 
 .test{
@@ -63,4 +65,13 @@ h3{
     border-bottom : 2px solid #191970;
     background-color: #4682b4;
     padding: 4px;
+}
+
+#footer {
+    border-top : 2px solid #191970;
+    background-color: #4682b4;
+    width: 100%;
+    padding-top:25px;
+    position: fixed;
+    bottom: 0px;
 }
