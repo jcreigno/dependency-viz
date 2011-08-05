@@ -18,7 +18,6 @@ public class BooterContextListener implements ServletContextListener {
   private ServletContext context = null;
 
   public void contextDestroyed(ServletContextEvent event) {
-    //Output a simple message to the server's console
     this.context = null;
 
   }
