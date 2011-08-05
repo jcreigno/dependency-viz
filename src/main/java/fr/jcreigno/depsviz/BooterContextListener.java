@@ -6,6 +6,8 @@ import javax.servlet.ServletContext;
 
 import org.apache.maven.repository.internal.DefaultServiceLocator;
 import org.sonatype.aether.RepositorySystem;
+import org.sonatype.aether.repository.LocalRepository;
+import org.sonatype.aether.repository.RemoteRepository;
 import org.sonatype.aether.connector.file.FileRepositoryConnectorFactory;
 import org.sonatype.aether.connector.wagon.WagonProvider;
 import org.sonatype.aether.connector.wagon.WagonRepositoryConnectorFactory;
@@ -21,10 +23,16 @@ public class BooterContextListener implements ServletContextListener {
 
   }
 
-
   public void contextInitialized(ServletContextEvent event) {
     this.context = event.getServletContext();
-    this.context.setAttribute("RepositorySystem",newRepositorySystem());
+    RepositorySystem sys = newRepositorySystem();
+    this.context.setAttribute("RepositorySystem", sys);
+    this.context.log("using remote repo : " + context.getInitParameter("remote-repo"));
+    this.context.setAttribute("repository", 
+        new RemoteRepository( "central", "default", context.getInitParameter("remote-repo")));
+    this.context.log("using local repo : " + context.getInitParameter("local-repo"));
+    this.context.setAttribute("local", 
+        sys.newLocalRepositoryManager(new LocalRepository( context.getInitParameter("local-repo"))));
   }
   
   public static RepositorySystem newRepositorySystem()

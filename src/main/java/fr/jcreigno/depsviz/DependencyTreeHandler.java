@@ -9,6 +9,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 import javax.servlet.ServletContext;
 
@@ -23,6 +24,7 @@ import org.sonatype.aether.collection.DependencySelector;
 import org.sonatype.aether.graph.Dependency;
 import org.sonatype.aether.graph.DependencyNode;
 import org.sonatype.aether.repository.LocalRepository;
+import org.sonatype.aether.repository.LocalRepositoryManager;
 import org.sonatype.aether.repository.RemoteRepository;
 import org.sonatype.aether.util.artifact.DefaultArtifact;
 import org.sonatype.aether.util.graph.selector.ScopeDependencySelector;
@@ -34,14 +36,13 @@ import org.sonatype.aether.util.graph.selector.AndDependencySelector;
 @Produces( { MediaType.APPLICATION_JSON })
 public class DependencyTreeHandler {
 
-    private RemoteRepository repo = new RemoteRepository( "central", "default", "http://repo1.maven.org/maven2/" );
-
     @Context
     private ServletContext context;
 
     @GET
     @Path("{groupId}/{artifactId}/{version}")
-    public String list(@PathParam("groupId") String groupId, 
+    public String list(@Context Request request,
+        @PathParam("groupId") String groupId, 
         @PathParam("artifactId") String artifactId,
         @PathParam("version") String version) {
         
@@ -50,7 +51,7 @@ public class DependencyTreeHandler {
         Artifact artifact = new DefaultArtifact( groupId+":"+artifactId+":"+version );
         CollectRequest collectRequest = new CollectRequest();
         collectRequest.setRoot( new Dependency( artifact, "" ) );
-        collectRequest.addRepository( repo );
+        collectRequest.addRepository( (RemoteRepository)context.getAttribute("repository"));
         CollectResult collectResult = null;
         try{
             collectResult = system.collectDependencies( session, collectRequest );
@@ -64,11 +65,9 @@ public class DependencyTreeHandler {
         return visitor.toString();
     }
         
-    public static RepositorySystemSession newRepositorySystemSession( RepositorySystem system ) {
+    private RepositorySystemSession newRepositorySystemSession( RepositorySystem system ) {
         MavenRepositorySystemSession session = new MavenRepositorySystemSession();
-
-        LocalRepository localRepo = new LocalRepository( "target/local-repo" );
-        session.setLocalRepositoryManager( system.newLocalRepositoryManager( localRepo ) );
+        session.setLocalRepositoryManager((LocalRepositoryManager) context.getAttribute("local") );
         
         DependencySelector depFilter =
               new AndDependencySelector( new ScopeDependencySelector("provided"),
