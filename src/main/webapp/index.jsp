@@ -9,9 +9,9 @@
 </head>
 <body>
   <div id="header">
-    <input type="text" title ="groupId" id="groupId" name="groupId" value="org.apache.maven.plugins"/> 
-    <input type="text" title ="artifactId" id="artifactId" name="artifactId" value="maven-ear-plugin"/> 
-    <input type="text" title ="version" id="version" name="version" value="2.0"/>
+    <input type="text" title ="groupId" id="groupId" name="groupId" value="${param.groupId}"/> 
+    <input type="text" title ="artifactId" id="artifactId" name="artifactId" value="${param.artifactId}"/> 
+    <input type="text" title ="version" id="version" name="version" value="${param.version}"/>
     <button type="button" name="btDisplay" id="btDisplay">Go !</button>
     <button type="button" name="btClear" id="btClear">Clear</button>
     <div id="filters">

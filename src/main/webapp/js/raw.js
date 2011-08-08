@@ -18,6 +18,12 @@
                         $(this).addClass('animateable').click(function(){next.slideToggle(400);});
                     }
                 });
+            }).error(function(data){
+                if(data.status == 404){
+                    el.append($('<p class="error"><span> Artifact not found ('+data.status+')</span></p>'));
+                }else{
+                    el.append($('<p class="error"><span>'+data.statusText+' ('+data.status+'): </span>'+ data.responseText+'</p>'));
+                }
             });
             
         });
@@ -33,6 +39,10 @@
         $("#scoperuntime").click(function(){
             $('.runtime').slideToggle(400);
         });
+        if($("#groupId").val && $("#artifactId").val() && $("#version").val()){
+            // submit user data.
+            $("#btDisplay").click();
+        }
     })
     
     function clearFilters() {
