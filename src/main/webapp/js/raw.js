@@ -7,9 +7,10 @@
     $(document).ready(function(){
     
         $("#btDisplay").click(function(){
-            clearFilters();
             var el = $("#viewport");
+            clearFilters();
             el.html($('<h3>'+$("#groupId").val()+':'+$("#artifactId").val()+':'+$("#version").val()+'</h3>'));
+            el.append($('<div id="loading"><p><img src="imgs/ajax-loader.gif" /> Please Wait</p></div>'));
             $.getJSON('api/tree/'+$("#groupId").val()+'/'+$("#artifactId").val()+'/'+$("#version").val(), function(data) {
                 el.append($(html(data)));
                 $("li").each(function(e){
@@ -24,6 +25,8 @@
                 }else{
                     el.append($('<p class="error"><span>'+data.statusText+' ('+data.status+'): </span>'+ data.responseText+'</p>'));
                 }
+            }).complete(function(){
+                $('#loading').remove();
             });
             
         });
