@@ -29,6 +29,13 @@ public class BooterContextListener implements ServletContextListener {
     this.context.log("using remote repo : " + context.getInitParameter("remote-repo"));
     this.context.setAttribute("repository", 
         new RemoteRepository( "central", "default", context.getInitParameter("remote-repo")));
+    if(context.getInitParameter("snapshots-remote-repo") != null){
+        this.context.log("using snapshot remote repo : " + context.getInitParameter("snapshots-remote-repo"));
+        RemoteRepository snaps = new RemoteRepository( "snapshot", "default", context.getInitParameter("snapshots-remote-repo"));
+        snaps.setPolicy(true,null);
+        this.context.setAttribute("snapshots", snaps);
+            
+    }
     this.context.log("using local repo : " + context.getInitParameter("local-repo"));
     this.context.setAttribute("local", 
         sys.newLocalRepositoryManager(new LocalRepository( context.getInitParameter("local-repo"))));

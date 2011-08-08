@@ -7,6 +7,10 @@
     <param-value>http://repo1.maven.org/maven2/</param-value>
   </context-param>
   <context-param>
+    <param-name>snapshots-remote-repo</param-name>
+    <param-value>http://repository.apache.org/snapshots/</param-value>
+  </context-param>
+  <context-param>
     <param-name>local-repo</param-name>
     <param-value>target/local-repo</param-value>
   </context-param>

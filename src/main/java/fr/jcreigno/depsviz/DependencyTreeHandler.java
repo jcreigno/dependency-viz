@@ -7,7 +7,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
-//import javax.ws.rs.core.CacheControl;
+import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.EntityTag;
 import javax.ws.rs.core.MediaType;
@@ -48,21 +48,28 @@ public class DependencyTreeHandler {
         @PathParam("artifactId") String artifactId,
         @PathParam("version") String version) {
         
-        String name = groupId+":"+artifactId+":"+version;
+        String name = groupId + ":" + artifactId + ":" + version;
         Artifact artifact = new DefaultArtifact( name );
+        boolean snapshot = artifact.isSnapshot();
         
         EntityTag etag = new EntityTag(name);
-        Response.ResponseBuilder responseBuilder = request.evaluatePreconditions(etag);
-        if (responseBuilder != null) {
+        CacheControl cc = new CacheControl();
+        cc.setMaxAge(snapshot ? 60 : 3600);
+        //must revalidate snapshots
+        cc.setMustRevalidate(snapshot);
+        
+        //Response.ResponseBuilder responseBuilder = request.evaluatePreconditions(etag);
+        //if (responseBuilder != null) {
               //context.log(name " + not changed..returning unmodified response code");
-              return responseBuilder.status(Response.Status.NOT_MODIFIED).build();
-        }
+        //      return responseBuilder.status(Response.Status.NOT_MODIFIED).build();
+        //}
         
         RepositorySystem system = (RepositorySystem)context.getAttribute("RepositorySystem");
         RepositorySystemSession session = newRepositorySystemSession(system);
         CollectRequest collectRequest = new CollectRequest();
         collectRequest.setRoot( new Dependency( artifact, "" ) );
         collectRequest.addRepository( (RemoteRepository)context.getAttribute("repository"));
+        collectRequest.addRepository((RemoteRepository)context.getAttribute("snapshots"));
         CollectResult collectResult = null;
         try{
             collectResult = system.collectDependencies( session, collectRequest );
@@ -73,10 +80,7 @@ public class DependencyTreeHandler {
         }
         JSonVisitor visitor = new JSonVisitor();
         collectResult.getRoot().accept(visitor);
-        //CacheControl cacheControl = new CacheControl();
-        //cacheControl.setMaxAge(3600);
-        
-        return Response.ok(visitor.toString()).tag(etag).build();
+        return Response.ok(visitor.toString())/*.cacheControl(cc).tag(etag)*/.build();
     }
         
     private RepositorySystemSession newRepositorySystemSession( RepositorySystem system ) {
