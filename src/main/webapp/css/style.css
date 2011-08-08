@@ -2,7 +2,9 @@ body {
     background: #fff;
     padding : 0;
     margin: 0;
+    font-family: Arial, "MS Trebuchet", sans-serif;
 }
+
 input {
     border: 1px solid #191970;
     padding : 3px;
@@ -19,6 +21,9 @@ h3{
     padding:0px;
     margin: 0px;
 }
+
+/*ul ul { font-size:95%; }*/
+
 #viewport{
     padding:5px 5px 0px 10px;
     overflow: auto;
@@ -32,6 +37,11 @@ h3{
 .runtime{
     color: rgb(128,128,128);
 }
+
+.error{
+    color :red;
+}
+
 .animateable{
     cursor: pointer;
     font-weight : bold;
