@@ -28,6 +28,7 @@ import org.sonatype.aether.graph.DependencyNode;
 import org.sonatype.aether.repository.LocalRepository;
 import org.sonatype.aether.repository.LocalRepositoryManager;
 import org.sonatype.aether.repository.RemoteRepository;
+import org.sonatype.aether.util.DefaultRepositorySystemSession;
 import org.sonatype.aether.util.artifact.DefaultArtifact;
 import org.sonatype.aether.util.graph.selector.ScopeDependencySelector;
 import org.sonatype.aether.util.graph.selector.OptionalDependencySelector;
@@ -38,8 +39,21 @@ import org.sonatype.aether.util.graph.selector.AndDependencySelector;
 @Produces( { MediaType.APPLICATION_JSON })
 public class DependencyTreeHandler {
 
-    @Context
-    private ServletContext context;
+    private RepositorySystem system = null;
+    private java.util.List<RemoteRepository> repositories = null;
+    private LocalRepositoryManager localRepo = null;
+    private ServletContext context = null;
+    
+    public DependencyTreeHandler (@Context ServletContext ctx) {
+        context = ctx;
+        system = (RepositorySystem)context.getAttribute("RepositorySystem");
+        repositories = new java.util.ArrayList<RemoteRepository>();
+        repositories.add((RemoteRepository)context.getAttribute("repository"));
+        if(context.getAttribute("snapshots") != null){
+            repositories.add((RemoteRepository)context.getAttribute("snapshots"));
+        }
+        localRepo = (LocalRepositoryManager) context.getAttribute("local");
+    }
 
     @GET
     @Path("{groupId}/{artifactId}/{version}")
@@ -52,40 +66,38 @@ public class DependencyTreeHandler {
         Artifact artifact = new DefaultArtifact( name );
         boolean snapshot = artifact.isSnapshot();
         
-        EntityTag etag = new EntityTag(name);
+        //EntityTag etag = new EntityTag(name);
         CacheControl cc = new CacheControl();
-        cc.setMaxAge(snapshot ? 60 : 3600);
+        cc.setMaxAge(snapshot ? 180 : 3600);
         //must revalidate snapshots
         cc.setMustRevalidate(snapshot);
         
-        //Response.ResponseBuilder responseBuilder = request.evaluatePreconditions(etag);
+        //Response.ResponseBuilder responseBuilder = request.evaluatePreconditions();
         //if (responseBuilder != null) {
               //context.log(name " + not changed..returning unmodified response code");
         //      return responseBuilder.status(Response.Status.NOT_MODIFIED).build();
         //}
         
-        RepositorySystem system = (RepositorySystem)context.getAttribute("RepositorySystem");
-        RepositorySystemSession session = newRepositorySystemSession(system);
-        CollectRequest collectRequest = new CollectRequest();
-        collectRequest.setRoot( new Dependency( artifact, "" ) );
-        collectRequest.addRepository( (RemoteRepository)context.getAttribute("repository"));
-        collectRequest.addRepository((RemoteRepository)context.getAttribute("snapshots"));
+        RepositorySystemSession session = newRepositorySystemSession();
+        CollectRequest collectRequest = new CollectRequest(new Dependency(artifact, ""), repositories);
         CollectResult collectResult = null;
         try{
             collectResult = system.collectDependencies( session, collectRequest );
-        }catch(DependencyCollectionException e ){
-            System.out.println(e.getMessage());
-            e.printStackTrace();
+        } catch(DependencyCollectionException e ){
+            context.log(e.getMessage(),e);
+            throw new WebApplicationException(e, Response.Status.BAD_REQUEST);
+        } catch(IllegalArgumentException e ){
+            context.log(e.getMessage(),e);
             throw new WebApplicationException(e, Response.Status.BAD_REQUEST);
         }
         JSonVisitor visitor = new JSonVisitor();
         collectResult.getRoot().accept(visitor);
-        return Response.ok(visitor.toString())/*.cacheControl(cc).tag(etag)*/.build();
+        return Response.ok(visitor.toString()).cacheControl(cc)/*.tag(etag)*/.build();
     }
         
-    private RepositorySystemSession newRepositorySystemSession( RepositorySystem system ) {
-        MavenRepositorySystemSession session = new MavenRepositorySystemSession();
-        session.setLocalRepositoryManager((LocalRepositoryManager) context.getAttribute("local") );
+    private RepositorySystemSession newRepositorySystemSession() {
+        DefaultRepositorySystemSession session = new MavenRepositorySystemSession();
+        session.setLocalRepositoryManager(localRepo);
         
         DependencySelector depFilter =
               new AndDependencySelector( new ScopeDependencySelector("provided"),
