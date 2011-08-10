@@ -60,6 +60,11 @@ h3{
     border-left : 1px dotted #000;
 }
 
+#viewport li span {
+    display : none;
+}
+
+
 #filters{
     padding-left : 10px;
     font-size : 80%

@@ -18,6 +18,10 @@
                     if(next && next[0] && next[0].localName =='ul'){     
                         $(this).addClass('animateable').click(function(){next.slideToggle(400);});
                     }
+                    $(this).hover(
+                        function(e){$(this).find('span').show();},
+                        function(e){$(this).find('span').hide();}
+                    );
                 });
             }).error(function(data){
                 if(data.status == 404){
@@ -59,7 +63,10 @@
         if(data.children){
             res +='<ul>';
             data.children.forEach(function (art){
-                res += '<li class="'+art.scope+'" title="scope :'+ art.scope +'">'+formatArtifact(art) +'</li>';
+                res += '<li class="'+art.scope+'" title="scope :'+ art.scope +'">'+formatArtifact(art) +
+                    '<span> <a title="show subtree starting from this artifact" href="./?groupId='+art.groupId+'&artifactId='+art.artifactId+'&version='+art.version+
+                    '"><img src="imgs/external-link.png" border="0" height="16" width="16"/></a></span>'
+                    + '</li>';
                 res += html(art);
             });
             res +='</ul>';
