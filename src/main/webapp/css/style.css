@@ -17,9 +17,18 @@ button {
 label[for]{
     cursor: pointer;
 }
+
 h3{
     padding:0px;
     margin: 0px;
+}
+
+ul {
+    padding-left: 20px;
+}
+
+li{
+    line-height:22px; 
 }
 
 /*ul ul { font-size:95%; }*/
@@ -58,6 +67,7 @@ h3{
 #viewport > ul {
     margin-top : 5px;
     border-left : 1px dotted #000;
+    list-style-position : inside;
 }
 
 #viewport li span {
