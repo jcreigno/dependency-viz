@@ -5,6 +5,7 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<title>Maven dependencies visualization</title>
+	<link rel="stylesheet" href="css/common.css" type="text/css">
 	<link rel="stylesheet" href="css/style.css" type="text/css">
 </head>
 <body>
@@ -35,7 +36,7 @@
   </div> 
   <div id="footer">
   </div>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
   <!--script src="js/raphael-min.js"></script-->
   <script src="js/raw.js"></script>
 </body>
