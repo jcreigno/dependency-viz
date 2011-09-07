@@ -1,0 +1,31 @@
+
+/*ul ul { font-size:95%; }*/
+
+#viewport{
+    padding: 0px;
+    border: 1px solid #191970;
+    width:100%;
+    height:100%;
+    margin:0px;
+}
+
+.test{
+    color: #83838d;
+}
+
+.runtime{
+    color: rgb(128,128,128);
+}
+
+.error{
+    color :red;
+}
+
+.animateable{
+    cursor: pointer;
+    font-weight : bold;
+}
+
+.animateable:hover{
+    
+}
