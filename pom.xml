@@ -43,23 +43,28 @@
    </plugins>
 </build>
  <dependencies>
-     <dependency>
-        <groupId>javax.ws.rs</groupId>
-        <artifactId>jsr311-api</artifactId>
-        <version>1.0</version>
-    </dependency>
     <dependency>
         <groupId>javax.xml.bind</groupId>
         <artifactId>jaxb-api</artifactId>
         <version>2.1</version>
         <scope>provided</scope>
     </dependency>
-  <dependency>
-   <!-- the implementation of JAX-RS -->
-   <groupId>com.sun.jersey</groupId>
-   <artifactId>jersey-server</artifactId>
-   <version>1.0.1</version>
-  </dependency>
+      <dependency>
+       <!-- the implementation of JAX-RS -->
+       <groupId>com.sun.jersey</groupId>
+       <artifactId>jersey-server</artifactId>
+       <version>${jersey-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.sun.jersey</groupId>
+        <artifactId>jersey-servlet</artifactId>
+        <version>${jersey-version}</version>
+     </dependency>
+      <dependency>
+        <groupId>com.sun.jersey</groupId>
+        <artifactId>jersey-json</artifactId>
+        <version>${jersey-version}</version>
+     </dependency>
   <!-- PROVIDED BY CONTAINER; HERE FOR COMPILE ONLY -->
   <dependency>
    <groupId>javax.servlet</groupId>
@@ -148,5 +153,6 @@
     <properties>
     <mavenVersion>3.0.3</mavenVersion>
     <wagonVersion>1.0-beta-7</wagonVersion>
+    <jersey-version>1.12</jersey-version>
   </properties>
 </project>
