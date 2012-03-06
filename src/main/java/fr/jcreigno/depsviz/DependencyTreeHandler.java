@@ -30,6 +30,7 @@ import org.sonatype.aether.repository.LocalRepositoryManager;
 import org.sonatype.aether.repository.RemoteRepository;
 import org.sonatype.aether.util.DefaultRepositorySystemSession;
 import org.sonatype.aether.util.artifact.DefaultArtifact;
+import org.sonatype.aether.util.graph.TreeDependencyVisitor;
 import org.sonatype.aether.util.graph.selector.ScopeDependencySelector;
 import org.sonatype.aether.util.graph.selector.OptionalDependencySelector;
 import org.sonatype.aether.util.graph.selector.ExclusionDependencySelector;
@@ -91,7 +92,7 @@ public class DependencyTreeHandler {
             throw new WebApplicationException(e, Response.Status.BAD_REQUEST);
         }
         JSonVisitor visitor = new JSonVisitor();
-        collectResult.getRoot().accept(visitor);
+        collectResult.getRoot().accept(new TreeDependencyVisitor(visitor));
         return Response.ok(visitor.toString()).cacheControl(cc)/*.tag(etag)*/.build();
     }
         
