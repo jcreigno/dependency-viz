@@ -80,6 +80,15 @@ public class DependencyTreeHandler {
         //}
         
         RepositorySystemSession session = newRepositorySystemSession();
+
+
+        try{
+            ArtifactRequest arequest = new ArtifactRequest(artifact,repositories,null);
+            ArtifactResult ars = system.resolveArtifact(session, arequest );
+        } catch(ArtifactResolutionException e){
+            return Response.status(Response.Status.NOT_FOUND).entity(e.getMessage()).type("text/plain").build();
+        }
+
         CollectRequest collectRequest = new CollectRequest(new Dependency(artifact, ""), repositories);
         CollectResult collectResult = null;
         try{
