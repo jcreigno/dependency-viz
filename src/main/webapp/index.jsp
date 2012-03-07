@@ -1,43 +1,72 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
-   "http://www.w3.org/TR/html4/strict.dtd">
 
+<!DOCTYPE html>
 <html lang="en">
-<head>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-	<title>Maven dependencies visualization</title>
-	<link rel="stylesheet" href="css/common.css" type="text/css">
-	<link rel="stylesheet" href="css/style.css" type="text/css">
-</head>
-<body>
-  <div id="header">
-    <input type="text" title ="groupId" id="groupId" name="groupId" value="${param.groupId}"/> 
-    <input type="text" title ="artifactId" id="artifactId" name="artifactId" value="${param.artifactId}"/> 
-    <input type="text" title ="version" id="version" name="version" value="${param.version}"/>
-    <button type="button" name="btDisplay" id="btDisplay">Go !</button>
-    <button type="button" name="btClear" id="btClear">Clear</button>
-    <div id="filters">
-        <span>filters &gt;</span>
-        <div>
-            <label for="scopecompile">compile</label>
-            <input type="checkbox" id="scopecompile" name="scopecompile" disabled="disabled" checked="checked"></input>
+  <head>
+    <meta charset="utf-8">
+    <title>Maven dependencies visualization</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- Le styles -->
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <style>
+      body {
+        padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
+      }
+    </style>
+    <link href="css/bootstrap-responsive.css" rel="stylesheet">
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <!-- Le fav and touch icons -->
+    <link rel="shortcut icon" href="images/favicon.ico">
+    <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">
+  </head>
+
+  <body>
+
+    <div class="navbar navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </a>
+          <a class="brand" href="#">Dependency viz</a>
+          <div class="nav-collapse">
+            <!--ul class="nav">
+              <li class="active"><a href="#">Home</a></li>
+              <li><a href="#contact">Contact</a></li>
+            </ul-->
+            <form class="navbar-search pull-left">
+                <input type="text" title="groupId" id="groupId" name="groupId" class="input-medium search-query" placeholder="groupId" value="${param.groupId}"/> 
+                <input type="text" title ="artifactId" id="artifactId" name="artifactId" class="input-medium search-query" placeholder="artifactId" value="${param.artifactId}"/>
+                <input type="text" title ="version" id="version" name="version" class="input-medium search-query" placeholder="version" value="${param.version}"/>
+                <i title="Display dependency tree for artifact." id="btDisplay" class="icon-search icon-white"></i>
+            </form>
+          </div><!--/.nav-collapse -->
         </div>
-        <div>
-            <label for="scopetest">test</label>
-            <input type="checkbox" id="scopetest" name="scopetest" checked="checked"></input>
-        </div>
-        <div>
-            <label for="scoperuntime">runtime</label>
-            <input type="checkbox" id="scoperuntime" name="scoperuntime" checked="checked"></input>
-        </div>
+      </div>
     </div>
-  </div>
-  <!--canvas id="viewport" width="800" height="600"></canvas-->
-  <div id="viewport"> 
-  </div> 
-  <div id="footer">
-  </div>
-  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
-  <!--script src="js/raphael-min.js"></script-->
-  <script src="js/raw.js"></script>
-</body>
+
+    <div class="container">
+      <!--h1>Bootstrap starter template</h1>
+      <p>Use this document as a way to quick start any new project.<br> All you get is this message and a barebones HTML document.</p-->
+      <div id="viewport">  </div> 
+    </div> <!-- /container -->
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.js"></script>
+    <script src="js/raw.js"></script>
+  </body>
 </html>
+
