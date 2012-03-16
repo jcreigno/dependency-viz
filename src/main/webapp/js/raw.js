@@ -49,7 +49,7 @@
             // submit user data.
             $("#btDisplay").click();
         }
-    })
+    });
     
     function clearFilters() {
         $("input[type='checkbox']").each(function (){
@@ -73,4 +73,4 @@
         return res;
     }
 
-})(this.jQuery)
+})(this.jQuery);
