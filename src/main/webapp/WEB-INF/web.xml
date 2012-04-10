@@ -3,17 +3,13 @@
     xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
   <display-name>Archetype Created Web Application</display-name>
   <context-param>
-    <param-name>remote-repo</param-name>
-    <param-value>http://repo1.maven.org/maven2/</param-value>
+    <param-name>global-settings</param-name>
+    <param-value>/WEB-INF/settings.xml</param-value>
   </context-param>
-  <context-param>
+  <!--context-param>
     <param-name>snapshots-remote-repo</param-name>
     <param-value>http://repository.apache.org/snapshots/</param-value>
-  </context-param>
-  <context-param>
-    <param-name>local-repo</param-name>
-    <param-value>target/local-repo</param-value>
-  </context-param>
+  </context-param-->
 
   <listener>
     <listener-class>fr.jcreigno.depsviz.BooterContextListener</listener-class>
