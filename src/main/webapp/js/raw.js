@@ -3,14 +3,28 @@
     function formatArtifact (artifact){
         return artifact.groupId+':'+artifact.artifactId+':'+artifact.version;
     }
-    
+    $(document).load(function(){
+        $("#btClear").click(function(){
+            $("#viewport").html('');
+            clearFilters();
+        });
+        
+        $("#scopetest").click(function(){
+            $('.test').slideToggle(400);
+        });
+        
+        $("#scoperuntime").click(function(){
+            $('.runtime').slideToggle(400);
+        });
+    });
     $(document).ready(function(){
         $("#btDisplay").click(function(){
             var el = $("#viewport");
+            var artifact = {groupId:$("#groupId").val(),artifactId:$("#artifactId").val(),version:$("#version").val()};
             clearFilters();
-            el.html($('<h3>'+$("#groupId").val()+':'+$("#artifactId").val()+':'+$("#version").val()+'</h3>'));
+            el.html(title(artifact));
             el.append($('<div id="loading"><p><img src="img/ajax-loader.gif" /> Downloading the Internet. Please Wait...</p></div>'));
-            $.getJSON('api/tree/'+$("#groupId").val()+'/'+$("#artifactId").val()+'/'+$("#version").val(), function(data) {
+            $.getJSON('api/tree/'+artifact.groupId+'/'+artifact.artifactId+'/'+artifact.version, function(data) {
                 el.append($(html(data)));
                 $("li").each(function(e){
                     var next =  $(this).next();
@@ -33,18 +47,7 @@
             });
             
         });
-        $("#btClear").click(function(){
-            $("#viewport").html('');
-            clearFilters();
-        });
         
-        $("#scopetest").click(function(){
-            $('.test').slideToggle(400);
-        });
-        
-        $("#scoperuntime").click(function(){
-            $('.runtime').slideToggle(400);
-        });
         if($("#groupId").val && $("#artifactId").val() && $("#version").val()){
             // submit user data.
             $("#btDisplay").click();
@@ -55,6 +58,13 @@
         $("input[type='checkbox']").each(function (){
             $(this)[0].checked = true;
         });
+    }
+    
+    function title (art){
+    	return '<h3>'+art.groupId+':'+art.artifactId+':'+art.version
+    			+'<span> <a title="direct link" href="./?groupId='+art.groupId
+    			+'&artifactId='+art.artifactId
+    			+'&version='+art.version+'"><i class="icon-tags"></i></a></span>'+'</h3>';
     }
     
     function html(data){
