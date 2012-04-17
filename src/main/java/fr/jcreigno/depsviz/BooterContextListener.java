@@ -110,6 +110,7 @@ public class BooterContextListener implements ServletContextListener {
 		return settings;
 	}
 
+
 	/**
 	 * Try to load file from ServletContext.
 	 * 
@@ -119,22 +120,8 @@ public class BooterContextListener implements ServletContextListener {
 	 * @throws SettingsBuildingException
 	 */
 	private File resolveFile(String filename) throws SettingsBuildingException {
-		URL url;
-		try {
-			url = this.context.getResource(filename);
-		} catch (MalformedURLException e) {
-			List<SettingsProblem> pbs = explainProblems(filename, e);
-			throw new SettingsBuildingException(pbs);
-		}
-		if (url != null) {
-			try {
-				return new File(url.toURI());
-			} catch (URISyntaxException e) {
-				List<SettingsProblem> pbs = explainProblems(filename, e);
-				throw new SettingsBuildingException(pbs);
-			}
-		}
-		return new File(filename);
+		File file = new File(this.context.getRealPath(filename));
+		return file.exists() ? file : new File(filename);
 	}
 
 	/**
