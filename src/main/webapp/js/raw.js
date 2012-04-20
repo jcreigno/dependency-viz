@@ -1,57 +1,24 @@
-(function($){
+(function($, ko){
 
     function formatArtifact (artifact){
         return artifact.groupId+':'+artifact.artifactId+':'+artifact.version;
     }
-    $(document).load(function(){
-        $("#btClear").click(function(){
-            $("#viewport").html('');
-            clearFilters();
-        });
-        
-        $("#scopetest").click(function(){
-            $('.test').slideToggle(400);
-        });
-        
-        $("#scoperuntime").click(function(){
-            $('.runtime').slideToggle(400);
-        });
-    });
+
+    function AppViewModel() {
+        this.groupId = ko.observable("");
+        this.artifactId = ko.observable("");
+        this.version = ko.observable("");
+
+        this.artifactName = ko.computed(function(){
+            return this.groupId()+':'+this.artifactId()+':'+this.version();
+        },this);
+
+    }
+
+   
     $(document).ready(function(){
-        $("#btDisplay").click(function(){
-            var el = $("#viewport");
-            var artifact = {groupId:$("#groupId").val(),artifactId:$("#artifactId").val(),version:$("#version").val()};
-            clearFilters();
-            el.html(title(artifact));
-            el.append($('<div id="loading"><p><img src="img/ajax-loader.gif" /> Downloading the Internet. Please Wait...</p></div>'));
-            $.getJSON('api/tree/'+artifact.groupId+'/'+artifact.artifactId+'/'+artifact.version, function(data) {
-                el.append($(html(data)));
-                $("li").each(function(e){
-                    var next =  $(this).next();
-                    if(next && next[0] && next[0].localName =='ul'){     
-                        $(this).addClass('animateable').click(function(){next.slideToggle(400);});
-                    }
-                    $(this).hover(
-                        function(e){$(this).find('span').show();},
-                        function(e){$(this).find('span').hide();}
-                    );
-                });
-            }).error(function(data){
-                if(data.status == 404){
-                    el.append($('<p class="error"><span class="label label-important"> Artifact not found ('+data.status+')</span></p>'));
-                }else{
-                    el.append($('<p class="error"><span class="label label-important">'+data.statusText+' ('+data.status+'): </span>'+ data.responseText+'</p>'));
-                }
-            }).complete(function(){
-                $('#loading').remove();
-            });
-            
-        });
-        
-        if($("#groupId").val && $("#artifactId").val() && $("#version").val()){
-            // submit user data.
-            $("#btDisplay").click();
-        }
+        // Activates knockout.js
+        ko.applyBindings(new AppViewModel());
     });
     
     function clearFilters() {
@@ -83,4 +50,4 @@
         return res;
     }
 
-})(this.jQuery);
+})(this.jQuery,this.ko);

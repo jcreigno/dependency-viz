@@ -1,10 +1,3 @@
-
-li{
-    line-height:22px; 
-}
-
-/*ul ul { font-size:95%; }*/
-
 #viewport{
     padding:5px 5px 0px 10px;
     overflow: auto;
@@ -30,18 +23,4 @@ li{
 
 .animateable:hover{
     
-}
-
-#viewport li + ul {
-    border-left : 1px dotted #000;
-}
-
-#viewport > ul {
-    margin-top : 5px;
-    border-left : 1px dotted #000;
-    list-style-position : inside;
-}
-
-#viewport li span {
-    display : none;
 }

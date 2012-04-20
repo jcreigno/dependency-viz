@@ -46,9 +46,9 @@
               <li><a href="#contact">Contact</a></li>
             </ul-->
             <form class="navbar-search pull-left">
-                <input type="text" title="groupId" id="groupId" name="groupId" class="input-medium search-query" placeholder="groupId" value="${param.groupId}"/> 
-                <input type="text" title ="artifactId" id="artifactId" name="artifactId" class="input-medium search-query" placeholder="artifactId" value="${param.artifactId}"/>
-                <input type="text" title ="version" id="version" name="version" class="input-medium search-query" placeholder="version" value="${param.version}"/>
+                <input type="text" title="groupId" id="groupId" name="groupId" class="input-medium search-query" placeholder="groupId" data-bind="value: groupId"/> 
+                <input type="text" title ="artifactId" id="artifactId" name="artifactId" class="input-medium search-query" placeholder="artifactId" data-bind="value: artifactId"/>
+                <input type="text" title ="version" id="version" name="version" class="input-medium search-query" placeholder="version" data-bind="value: version"/>
                 <i title="Display dependency tree for artifact." id="btDisplay" class="icon-search icon-white"></i>
             </form>
           </div><!--/.nav-collapse -->
@@ -59,12 +59,17 @@
     <div class="container">
       <!--h1>Bootstrap starter template</h1>
       <p>Use this document as a way to quick start any new project.<br> All you get is this message and a barebones HTML document.</p-->
-      <div id="viewport">  </div> 
+      <div id="viewport">
+        <h3><span data-bind="text : artifactName"></span>
+    		<span> <a title="direct link" href="./?groupId=art.groupId&artifactId=art.artifactId&version=+art.version"><i class="icon-tags"></i></a></span>
+        </h3>
+      </div> 
     </div> <!-- /container -->
     <!-- Le javascript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="js/jquery.min.js"></script>
+    <script src="js/knockout-2.0.0.js"></script>
     <script src="js/bootstrap.js"></script>
     <script src="js/raw.js"></script>
   </body>
