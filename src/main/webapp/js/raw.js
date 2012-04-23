@@ -4,50 +4,92 @@
         return artifact.groupId+':'+artifact.artifactId+':'+artifact.version;
     }
 
-    function AppViewModel() {
-        this.groupId = ko.observable("");
-        this.artifactId = ko.observable("");
-        this.version = ko.observable("");
-
-        this.artifactName = ko.computed(function(){
-            return this.groupId()+':'+this.artifactId()+':'+this.version();
-        },this);
-
-    }
-
-   
-    $(document).ready(function(){
-        // Activates knockout.js
-        ko.applyBindings(new AppViewModel());
-    });
-    
-    function clearFilters() {
-        $("input[type='checkbox']").each(function (){
-            $(this)[0].checked = true;
+    function AppViewModel(g,a,v,deps) {
+        var self = this;
+        self.groupId = ko.observable(g || '');
+        self.artifactId = ko.observable(a || '');
+        self.version = ko.observable(v || '');
+        self.scope = '';
+        self.dependencies = ko.observableArray(deps || []);
+        self.defined = ko.computed(function(){
+            return self.groupId() && self.artifactId() && self.version();
         });
+
+        self.artifactName = ko.computed(function(){
+            return [self.groupId(),self.artifactId(),self.version()].join(':');
+        },self);
+
+        self.url = ko.computed(function(){
+            if(self.defined()){
+                return [self.groupId(),self.artifactId(),self.version()].join('/');
+            }
+            return "";
+        },self);
+
+        self.gotoArtifact = function(){
+            return location.hash = self.url();
+        };
     }
-    
-    function title (art){
-    	return '<h3>'+art.groupId+':'+art.artifactId+':'+art.version
-    			+'<span> <a title="direct link" href="./?groupId='+art.groupId
-    			+'&artifactId='+art.artifactId
-    			+'&version='+art.version+'"><i class="icon-tags"></i></a></span>'+'</h3>';
-    }
-    
-    function html(data){
-        var res = '';
-        if(data.children){
-            res +='<ul>';
-            data.children.forEach(function (art){
-                res += '<li class="'+art.scope+'" title="scope :'+ art.scope +'">'+formatArtifact(art) +
-                    '<span style="display:none"> <a title="show subtree starting from this artifact" href="./?groupId='+art.groupId+'&artifactId='+art.artifactId+'&version='+art.version+
-                    '"><i class="icon-tags"></i></a></span>'
-                    + '</li>';
-                res += html(art);
-            });
-            res +='</ul>';
+
+    function createViewModel(art) {
+        var res = new AppViewModel(art.groupId,art.artifactId,art.version);
+        res.scope = art.scope;
+        if(art.children && art.children.length>0){
+           res.dependencies($.map(art.children,function(dep){
+                return createViewModel(dep);
+           }));
         }
         return res;
     }
+
+    $(document).ready(function(){
+        // Activates knockout.js
+        var model = new AppViewModel();
+        ko.applyBindings(model);
+        // handle apps events
+        $('#viewport').on('treechanged', function(viewport) {
+            $("li").each(function(e){
+                var next =  $(this).next();
+                if(next && next[0] && next[0].localName =='ul'){     
+                    $(this).addClass('animateable').click(function(){next.slideToggle(400);});
+                }
+            });
+        }).on('loading', function() {
+            $(this).append($('<div id="loading"><p><img src="img/ajax-loader.gif" /> Downloading the Internet. Please Wait...</p></div>'));
+        }).on('error', function(evt, data) {
+            var msg = '<div id="error"><p class="error"><span class="label label-important">';
+            if(data.status == 404){
+                msg += 'Artifact not found ('+data.status+')</span>';
+            }else{
+                msg += data.statusText+' ('+data.status+'): </span>'+ data.responseText;
+            }
+            msg += '</p></div>';
+            $('#viewport').append($(msg));
+
+        });
+
+        // Client-side routes    
+        Sammy(function() {
+            this.get('#:groupId/:artifactId/:version', function() {
+                $('#viewport').trigger('loading');
+                model.groupId(this.params.groupId);
+                model.artifactId(this.params.artifactId);
+                model.version(this.params.version);
+                model.dependencies([]);
+                if($('#error')){
+                    $('#error').remove();
+                }
+                $.getJSON('api/tree/'+model.url(), function(data) {
+                    model.dependencies($.map(data.children,createViewModel));
+                    $('#viewport').trigger('treechanged');
+                }).error(function(data){
+                    $('#viewport').trigger('error',data);
+                }).complete(function(){
+                    $('#loading').remove();
+                });
+            });
+            this.get('',function(){});
+        }).run();
+    });
 
 })(this.jQuery,this.ko);
