@@ -80,7 +80,9 @@
                     $('#error').remove();
                 }
                 $.getJSON('api/tree/'+model.url(), function(data) {
-                    model.dependencies($.map(data.children,createViewModel));
+					if(data.children){
+						model.dependencies($.map(data.children,createViewModel));
+					}
                     $('#viewport').trigger('treechanged');
                 }).error(function(data){
                     $('#viewport').trigger('error',data);
