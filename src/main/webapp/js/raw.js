@@ -49,10 +49,12 @@
         // handle apps events
         $('#viewport').on('treechanged', function(viewport) {
             $("li").each(function(e){
-                var next =  $(this).next();
-                if(next && next[0] && next[0].localName =='ul'){     
-                    $(this).addClass('animateable').click(function(){next.slideToggle(400);});
-                }
+                var next =  $(this).next('ul');
+				if(next.children('li').length>0){
+					$(this).addClass('animateable').click(function(){next.slideToggle(400);});
+				}else{ // cleanup dom...
+					next.remove();
+				}
             });
         }).on('loading', function() {
             $(this).append($('<div id="loading"><p><img src="img/ajax-loader.gif" /> Downloading the Internet. Please Wait...</p></div>'));
