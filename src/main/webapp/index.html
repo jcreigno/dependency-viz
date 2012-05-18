@@ -63,8 +63,7 @@
         <h3 data-bind="visible: defined"><span data-bind="text : artifactName"></span>
     		<span> <a title="direct link" data-bind="attr: { href: '#'+url() }"><i class="icon-tags"></i></a></span>
         </h3>
-        <ul data-bind="template: { name: 'dependency-template', foreach: dependencies }">
-        </ul>
+        <ul data-bind="template: { name: 'dependency-template', foreach: dependencies }"></ul>
       </div> 
     </div> <!-- /container -->
     <!-- Le javascript
@@ -75,9 +74,8 @@
     <script src="js/sammy-latest.min.js"></script>
     <script src="js/bootstrap.js"></script>
     <script src="js/raw.js"></script>
-    <script type="text/html" id="dependency-template">
-        <li data-bind="attr: {class: scope, title: 'scope : ' + scope}"><span data-bind="text:artifactName"></span> <a title="display tree from here" data-bind="attr: { href: '#'+url() }"><i class='icon-tags'></i></a></li>
-        <ul data-bind="template: { name: 'dependency-template', foreach: $data.dependencies }"></ul>
+    <script type="text/html" id="dependency-template"><li data-bind="attr: {title: 'scope'}"><span data-bind="text:artifactName"></span> <a title="display tree from here" data-bind="attr: { href: '#'+url() }"><i class='icon-tags'></i></a></li>
+		<ul data-bind="template: { name: 'dependency-template', foreach: $data.dependencies }"></ul>
     </script>
   </body>
 </html>
