@@ -1,7 +1,9 @@
-#viewport{
-    padding:5px 5px 0px 10px;
-    overflow: auto;
-    margin-bottom:10px;
+
+
+#graph {
+    border :1px solid #000;
+    height : 500px;
+    /*width : 100%;*/
 }
 
 .test{

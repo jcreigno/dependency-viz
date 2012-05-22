@@ -194,9 +194,19 @@
 
   $(document).ready(function(){
     var sys = arbor.ParticleSystem() // create the system with sensible repulsion/stiffness/friction
-    sys.parameters({stiffness:100, repulsion:2000, gravity:true, dt:0.015}) // use center-gravity to make the graph settle nicely (ymmv)
-    sys.renderer = Renderer("#viewport") // our newly created renderer will have its .init() method called shortly by sys...
+    sys.parameters({stiffness:10, repulsion:200, gravity:true, dt:0.015}) // use center-gravity to make the graph settle nicely (ymmv)
+    //var $graph = $('#graph');    
+    //$graph.append('<canvas id="canvas"></canvas>');
+    //$('#canvas').height($graph.height()).width($graph.width());
+    sys.renderer = Renderer("#graph"); // our newly created renderer will have its .init() method called shortly by sys...
     document.system = sys;
+
+    $('#viewport').on('treechanged', function(event, data) {
+        //$('#graph').height(Math.max(500,data.children.length*50));
+        document.system.graft(document.system.renderer.tree(data));
+    }).on('loading',function(){
+        document.system.prune(function(){return true;});
+    });
 
     //sys.graft({edges:artifact});
     //var graph = {edges:sys.renderer.tree(artifact)};
@@ -218,15 +228,6 @@
     //   }
     //})
     
-  })
-  
-  $("#btDisplay").click(function(){
-    $.getJSON('api/tree/'+$("#groupId").val()+'/'+$("#artifactId").val()+'/'+$("#version").val(), function(data) {
-        document.system.graft(document.system.renderer.tree(data));
-    });
-  });
-  $("#btClear").click(function(){
-    document.system.prune(function(node){return true;});
   });
 
 })(this.jQuery)
