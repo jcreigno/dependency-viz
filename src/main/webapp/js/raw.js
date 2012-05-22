@@ -46,6 +46,7 @@
         // Activates knockout.js
         var model = new AppViewModel();
         ko.applyBindings(model);
+        var $viewport = $('#viewport');
         // handle apps events
         $('#viewport').on('treechanged', function(viewport) {
             $("li").each(function(e){
@@ -66,14 +67,13 @@
                 msg += data.statusText+' ('+data.status+'): </span>'+ data.responseText;
             }
             msg += '</p></div>';
-            $('#viewport').append($(msg));
-
+            $viewport.append($(msg));
         });
 
         // Client-side routes    
         Sammy(function() {
             this.get('#:groupId/:artifactId/:version', function() {
-                $('#viewport').trigger('loading');
+                $viewport.trigger('loading');
                 model.groupId(this.params.groupId);
                 model.artifactId(this.params.artifactId);
                 model.version(this.params.version);
@@ -82,12 +82,13 @@
                     $('#error').remove();
                 }
                 $.getJSON('api/tree/'+model.url(), function(data) {
-					if(data.children){
-						model.dependencies($.map(data.children,createViewModel));
-					}
-                    $('#viewport').trigger('treechanged');
+				if(data.children){
+					model.dependencies($.map(data.children,createViewModel));
+				}
+                $viewport.trigger('treechanged',data);
+
                 }).error(function(data){
-                    $('#viewport').trigger('error',data);
+                    $viewport.trigger('error',data);
                 }).complete(function(){
                     $('#loading').remove();
                 });
