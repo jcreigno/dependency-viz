@@ -48,7 +48,7 @@
         ko.applyBindings(model);
         var $viewport = $('#viewport');
         // handle apps events
-        $('#viewport').on('treechanged', function(viewport) {
+        $viewport.on('treechanged', function(viewport) {
             $("li").each(function(e){
                 var next =  $(this).next('ul');
 				if(next.children('li').length>0){
