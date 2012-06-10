@@ -97,7 +97,8 @@
         }).run();
 
         //setup typehead : thanks @geuis
-    var autocomplete = $('#version').typeahead({source:[],items:15}).on('keyup', function(ev){
+    var autocomplete = $('#version').typeahead({source:[],items:15
+        }).on('keyup', function(ev){
             ev.stopPropagation();
             ev.preventDefault();
 
@@ -125,12 +126,19 @@
                         //while(i--){
                         //    arr[i] = data.results[i].text
                         //}
-
+                        var group = model.groupId();
+                        var artifact = model.artifactId();
+                        self.data('typeahead').select = function () {
+                          var val = this.$menu.find('.active').attr('data-value')
+                          this.$element
+                            .val(this.updater(val))
+                            .change();
+                          this.hide();
+                          model.gotoArtifact();
+                          return this;
+                        };
                         //set your results into the typehead's source 
                         self.data('typeahead').source = data;
-                        self.data('typeahead').item = function(el){
-                            return '<li><a href="'+model.groupId()+'/'+model.artifactId()+'/'+el+'"></a></li>';
-                        };
 
                         //trigger keyup on the typeahead to make it search
                         self.trigger('keyup');
