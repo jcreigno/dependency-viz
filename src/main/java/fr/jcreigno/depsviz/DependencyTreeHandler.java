@@ -9,6 +9,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.Context;
@@ -62,15 +63,23 @@ public class DependencyTreeHandler {
 	@GET
 	@Path("{groupId}/{artifactId}")
 	public Response versions(@Context Request request, @PathParam("groupId") String groupId,
-			@PathParam("artifactId") String artifactId) {
+			@PathParam("artifactId") String artifactId, @QueryParam("q")String query) {
 		RepositorySystemSession session = newRepositorySystemSession();
+
+        String q = query == null ? "[0.0.1,)": "["+query+",)";
 		try {
-			Artifact artifact = new DefaultArtifact(groupId, artifactId, "pom", "[0.0.1,)");
+			Artifact artifact = new DefaultArtifact(groupId, artifactId, "pom", q);
 			VersionRangeRequest arequest = new VersionRangeRequest(artifact, repositories, null);
 			VersionRangeResult ars = system.resolveVersionRange(session, arequest);
 			List<Version> vs = ars.getVersions();
 			StringBuilder builder = new StringBuilder("[");
+            boolean first = true;
 			for (Version v : vs) {
+                if(!first){
+                    builder.append(',');
+                }else{
+                    first = false;
+                }
 				builder.append('\'').append(v.toString()).append('\'');
 			}
 			builder.append(']');
