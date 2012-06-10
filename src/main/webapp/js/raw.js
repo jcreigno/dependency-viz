@@ -58,7 +58,7 @@
 				}
             });
         }).on('loading', function() {
-            $(this).append($('<div id="loading"><p><img src="img/ajax-loader.gif" /> Downloading the Internet. Please Wait...</p></div>'));
+            $viewport.append($('<div id="loading"><p><img src="img/ajax-loader.gif" /> Downloading the Internet. Please Wait...</p></div>'));
         }).on('error', function(evt, data) {
             var msg = '<div id="error"><p class="error"><span class="label label-important">';
             if(data.status == 404){
