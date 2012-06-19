@@ -47,10 +47,10 @@
               <li><a href="#contact">Contact</a></li>
             </ul-->
             <form class="navbar-search pull-left">
-                <input type="text" title="groupId" id="groupId" name="groupId" class="input-medium search-query" placeholder="groupId" data-bind="value: groupId"/> 
-                <input type="text" title ="artifactId" id="artifactId" name="artifactId" class="input-medium search-query" placeholder="artifactId" data-bind="value: artifactId"/>
-                <input type="text" title ="version" id="version" name="version" class="input-medium search-query" placeholder="version" autocomplete="off" data-provide="typeahead" data-bind="value: version"/>
-                <i title="Display dependency tree for artifact." id="btDisplay" data-bind="click :gotoArtifact" class="icon-search icon-white"></i>
+                <input type="text" title="groupId" id="groupId" name="groupId" class="input-medium search-query" placeholder="groupId" data-bind="value: artifact.groupId"/> 
+                <input type="text" title ="artifactId" id="artifactId" name="artifactId" class="input-medium search-query" placeholder="artifactId" data-bind="value: artifact.artifactId"/>
+                <input type="text" title ="version" id="version" name="version" class="input-medium search-query" placeholder="version" autocomplete="off" data-provide="typeahead" data-bind="value: artifact.version"/>
+                <i title="Display dependency tree for artifact." id="btDisplay" data-bind="click : artifact.gotoArtifact" class="icon-search icon-white"></i>
             </form>
           </div><!--/.nav-collapse -->
         </div>
@@ -59,16 +59,35 @@
 
     <div class="container">
       <div class="row">
+        <div class="span12">
+
+        <h3 data-bind="visible: artifact.defined"><span data-bind="text : artifact.artifactName"></span>
+    		<span><a title="direct link" data-bind="attr: { href: '#'+artifact.url() }"><i class="icon-tags"></i></a></span>
+        </h3>  
+        </div>
+      </div>
+      <div class="row">
         <div class="span6">
           <div id="viewport">
-            <h3 data-bind="visible: defined"><span data-bind="text : artifactName"></span>
-        		<span><a title="direct link" data-bind="attr: { href: '#'+url() }"><i class="icon-tags"></i></a></span>
-            </h3>
-            <ul data-bind="template: { name: 'dependency-template', foreach: dependencies }">
+            <ul data-bind="template: { name: 'dependency-template', foreach: artifact.dependencies }">
             </ul>
           </div>
         </div>
         <div class="span6">
+              <div class="well">
+                <h7><i class="icon-edit"></i> <span>Scopes :</span></h7>
+                <form class="form-inline">
+                    <label class="checkbox">
+                        <input type="checkbox" id="scopecompile" data-bind="checked: config.scopes.compile"/>compile
+                    </label>
+                    <label class="checkbox">
+                        <input type="checkbox" id="scopetest" data-bind="checked: config.scopes.test"/>test
+                    </label>
+                    <label class="checkbox">
+                        <input type="checkbox" id="scoperuntime" data-bind="checked: config.scopes.runtime"/>runtime
+                    </label>
+                </form>
+            </div>
           <div id="graph"></div>
         </div>
       </div>
@@ -85,7 +104,7 @@
     <script src="js/arbor-tween.js"></script>
     <script src="js/raw.js"></script>
     <script src="js/arbor-raphael.js"></script>
-    <script type="text/html" id="dependency-template"><li data-bind="attr: {title: 'scope'}"><span data-bind="text:artifactName"></span> <a title="display tree from here" data-bind="attr: { href: '#'+url() }"><i class='icon-tags'></i></a></li>
+    <script type="text/html" id="dependency-template"><li data-bind="attr: {title: $data.scope, class:$data.scope}"><span data-bind="text:artifactName"></span><a title="display tree from here" data-bind="attr: { href: '#'+url() }"><i class='icon-tags'></i></a></li>
 		<ul data-bind="template: { name: 'dependency-template', foreach: $data.dependencies }"></ul>
     </script>
   </body>

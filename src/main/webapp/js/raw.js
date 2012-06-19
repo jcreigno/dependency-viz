@@ -1,15 +1,25 @@
 (function($, ko){
 
-    function formatArtifact (artifact){
-        return artifact.groupId+':'+artifact.artifactId+':'+artifact.version;
+    function AppViewModel() {
+        var self = this;
+        self.artifact = new ArtifactViewModel();
+        self.config = new Config();
     }
 
-    function AppViewModel(g,a,v,deps) {
+    function Config(){
+        var self = this;
+        self.scopes = { 'compile': ko.observable(true)
+            , 'test':ko.observable(true)
+            , 'runtime':ko.observable(true) 
+        };
+    }
+
+    function ArtifactViewModel(g,a,v,deps) {
         var self = this;
         self.groupId = ko.observable(g || '');
         self.artifactId = ko.observable(a || '');
         self.version = ko.observable(v || '');
-        self.scope = '';
+        self.scope = ko.observable('compile');
         self.dependencies = ko.observableArray(deps || []);
         self.defined = ko.computed(function(){
             return self.groupId() && self.artifactId() && self.version();
@@ -32,7 +42,7 @@
     }
 
     function createViewModel(art) {
-        var res = new AppViewModel(art.groupId,art.artifactId,art.version);
+        var res = new ArtifactViewModel(art.groupId,art.artifactId,art.version);
         res.scope = art.scope;
         if(art.children && art.children.length>0){
            res.dependencies($.map(art.children,function(dep){
@@ -44,7 +54,7 @@
 
     $(document).ready(function(){
         // Activates knockout.js
-        var model = new AppViewModel();
+        model = new AppViewModel();
         ko.applyBindings(model);
         var $viewport = $('#viewport');
         // handle apps events
@@ -70,20 +80,29 @@
             $viewport.append($(msg));
         });
 
+        $("#scopetest").click(function(){
+            $('li.test').slideToggle(400);
+        });
+        
+        $("#scoperuntime").click(function(){
+            $('li.runtime').slideToggle(400);
+        });
+
+
         // Client-side routes    
         Sammy(function() {
             this.get('#:groupId/:artifactId/:version', function() {
                 $viewport.trigger('loading');
-                model.groupId(this.params.groupId);
-                model.artifactId(this.params.artifactId);
-                model.version(this.params.version);
-                model.dependencies([]);
+                model.artifact.groupId(this.params.groupId);
+                model.artifact.artifactId(this.params.artifactId);
+                model.artifact.version(this.params.version);
+                model.artifact.dependencies([]);
                 if($('#error')){
                     $('#error').remove();
                 }
-                $.getJSON('api/tree/'+model.url(), function(data) {
+                $.getJSON('api/tree/'+model.artifact.url(), function(data) {
 				if(data.children){
-					model.dependencies($.map(data.children,createViewModel));
+					model.artifact.dependencies($.map(data.children,createViewModel));
 				}
                 $viewport.trigger('treechanged',data);
 
