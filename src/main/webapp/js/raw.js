@@ -101,11 +101,10 @@
                     $('#error').remove();
                 }
                 $.getJSON('api/tree/'+model.artifact.url(), function(data) {
-				if(data.children){
-					model.artifact.dependencies($.map(data.children,createViewModel));
-				}
-                $viewport.trigger('treechanged',data);
-
+				    if(data.children){
+					    model.artifact.dependencies($.map(data.children,createViewModel));
+				    }
+                    $viewport.trigger('treechanged',data);
                 }).error(function(data){
                     $viewport.trigger('error',data);
                 }).complete(function(){
@@ -132,7 +131,7 @@
                     self.data('active', true);
 
                     //Do data request. Insert your own API logic here.
-                    $.getJSON('api/tree/'+model.groupId()+'/'+model.artifactId(),{
+                    $.getJSON('api/tree/'+model.artifact.groupId()+'/'+model.artifact.artifactId(),{
                         q: $(this).val()
                     }, function(data) {
 
@@ -145,15 +144,15 @@
                         //while(i--){
                         //    arr[i] = data.results[i].text
                         //}
-                        var group = model.groupId();
-                        var artifact = model.artifactId();
+                        var group = model.artifact.groupId();
+                        var artifact = model.artifact.artifactId();
                         self.data('typeahead').select = function () {
                           var val = this.$menu.find('.active').attr('data-value')
                           this.$element
                             .val(this.updater(val))
                             .change();
                           this.hide();
-                          model.gotoArtifact();
+                          model.artifact.gotoArtifact();
                           return this;
                         };
                         //set your results into the typehead's source 
