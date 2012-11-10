@@ -165,7 +165,7 @@
 	</dependencies>
 	<properties>
 		<mavenVersion>3.0.3</mavenVersion>
-		<aetherVersion>1.12</aetherVersion>
+		<aetherVersion>1.13.1</aetherVersion>
 		<wagonVersion>1.0-beta-7</wagonVersion>
 		<jersey-version>1.12</jersey-version>
 	</properties>
