@@ -1,6 +1,8 @@
 package fr.jcreigno.depsviz;
 
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import javax.servlet.ServletContext;
 import javax.ws.rs.GET;
@@ -12,8 +14,10 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 
 import org.sonatype.aether.RepositorySystem;
 import org.sonatype.aether.RepositorySystemSession;
@@ -23,6 +27,7 @@ import org.sonatype.aether.collection.CollectResult;
 import org.sonatype.aether.collection.DependencyCollectionException;
 import org.sonatype.aether.collection.DependencySelector;
 import org.sonatype.aether.graph.Dependency;
+import org.sonatype.aether.graph.Exclusion;
 import org.sonatype.aether.repository.RemoteRepository;
 import org.sonatype.aether.resolution.ArtifactRequest;
 import org.sonatype.aether.resolution.ArtifactResolutionException;
@@ -87,7 +92,7 @@ public class DependencyTreeHandler {
 	@GET
 	@Path("{groupId}/{artifactId}/{version}")
 	public Response list(@Context Request request, @PathParam("groupId") String groupId,
-			@PathParam("artifactId") String artifactId, @PathParam("version") String version) {
+			@PathParam("artifactId") String artifactId, @PathParam("version") String version, @Context UriInfo infos) {
 
 		Artifact artifact = new DefaultArtifact(groupId, artifactId, "pom", version);
 		boolean snapshot = artifact.isSnapshot();
@@ -98,7 +103,7 @@ public class DependencyTreeHandler {
 		// must revalidate snapshots
 		cc.setMustRevalidate(snapshot);
 
-		RepositorySystemSession session = newRepositorySystemSession();
+		RepositorySystemSession session = newRepositorySystemSession(infos.getQueryParameters());
 
 		try {
 			ArtifactRequest arequest = new ArtifactRequest(artifact, repositories, null);
@@ -128,17 +133,43 @@ public class DependencyTreeHandler {
 	private RepositorySystemSession newRepositorySystemSession() {
 		DefaultRepositorySystemSession session = new DefaultRepositorySystemSession(defaultSession);
 
-		DependencySelector depFilter = new AndDependencySelector(new ScopeDependencySelector("provided"),
-				new OptionalDependencySelector(), new ExclusionDependencySelector());
+		ScopeDependencySelector scopeSelector = new ScopeDependencySelector("provided");
+		ExclusionDependencySelector excludes = new ExclusionDependencySelector();
+		DependencySelector depFilter = new AndDependencySelector(scopeSelector, new OptionalDependencySelector(),
+				excludes);
 		session.setDependencySelector(depFilter);
 
-		// session.setTransferListener( new ConsoleTransferListener() );
-		// session.setRepositoryListener( new ConsoleRepositoryListener() );
+		return session;
+	}
 
-		// uncomment to generate dirty trees
-		// session.setDependencyGraphTransformer( null );
+	private RepositorySystemSession newRepositorySystemSession(MultivaluedMap<String, String> map) {
+		DefaultRepositorySystemSession session = new DefaultRepositorySystemSession(defaultSession);
+
+		List<String> list = map.get("filter.scope");
+		String scope = list == null ? "provided" : list.iterator().next();
+		ScopeDependencySelector scopeSelector = new ScopeDependencySelector(scope);
+		List<String> listexcludes = map.get("filter.excludes");
+
+		ExclusionDependencySelector excludes = new ExclusionDependencySelector(toExclusion(listexcludes));
+		DependencySelector depFilter = new AndDependencySelector(scopeSelector, new OptionalDependencySelector(),
+				excludes);
+		session.setDependencySelector(depFilter);
 
 		return session;
+	}
+
+	private Set<Exclusion> toExclusion(List<String> listexcludes) {
+		if (listexcludes == null || listexcludes.isEmpty()) {
+			return null;
+		}
+		TreeSet<Exclusion> res = new TreeSet<Exclusion>();
+		for (String string : listexcludes) {
+			String[] parts = string.split(":");
+			Exclusion exclusion = new Exclusion(parts[0], parts.length > 2 ? parts[1] : "*", parts.length > 3 ? parts[2]
+					: "*", parts.length > 4 ? parts[3] : "*");
+			res.add(exclusion);
+		}
+		return res;
 	}
 
 }
