@@ -80,7 +80,7 @@ public class DependencyTreeHandler {
                 }else{
                     first = false;
                 }
-				builder.append('\'').append(v.toString()).append('\'');
+				builder.append('\"').append(v.toString()).append('\"');
 			}
 			builder.append(']');
 			return Response.ok(builder.toString()).build();
