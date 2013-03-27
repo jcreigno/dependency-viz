@@ -6,13 +6,6 @@
 	<packaging>war</packaging>
 	<version>1.0-SNAPSHOT</version>
 	<name>dependencyviz Maven Webapp</name>
-	<repositories>
-		<repository>
-			<id>javamaven2</id>
-			<name>Repository for Maven2</name>
-			<url>http://download.java.net/maven/2</url>
-		</repository>
-	</repositories>
 	<build>
 		<finalName>dependencyviz</finalName>
 		<plugins>
